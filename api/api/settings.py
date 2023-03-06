@@ -40,28 +40,34 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third party apps
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'dj_rest_auth',
-    # 'all_auth',
-    # 'all_auth.account',
-    # 'all_auth.socialaccount',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.google',
-    # 'dj_rest_auth.registration',
-    # 'phonenumber_field',
-    # 'corsheaders',
-    # 'drf_spectacular',
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth.registration',
+    'phonenumber_field',
+    'corsheaders',
+    'drf_spectacular',
 
     # Local apps
-    'products',
     'users',
+    'products',
+    # 'orders',
+    # 'payment',
 ]
 
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -147,3 +153,47 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Token length for OTP
+TOKEN_LENGTH = 6
+
+# Token expiry
+TOKEN_EXPIRE_MINUTES = 3
+
+# Authentication
+AUTHENTICATION_BACKENDS = [
+    'users.backends.phone_backend.PhoneNumberAuthBackend',
+    'users.backends.email_backend.EmailAuthBackend',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SITE_ID = 1
+
+REST_USE_JWT = True
+
+JWT_AUTH_COOKIE = 'phonenumber-auth'
+JWT_AUTH_REFRESH_COOKIE = 'phonenumber-refresh-token'
+
+# ACCOUNT_EMAIL_VERIFICATION SETTINGS
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+# Phone number field
+PHONENUMBER_DEFAULT_REGION = 'PL'
+
+# Email
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = config('EMAIL_USER')
+# EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
