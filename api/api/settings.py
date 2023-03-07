@@ -43,14 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth',
+    'rest_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
     'dj_rest_auth.registration',
-    'phonenumber_field',
-    'corsheaders',
+    # 'phonenumber_field',
+    # 'corsheaders',
     'drf_spectacular',
 
     # Local apps
@@ -60,6 +62,11 @@ INSTALLED_APPS = [
     # 'payment',
 ]
 
+SITE_ID = 1
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -155,12 +162,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Token length for OTP
-TOKEN_LENGTH = 6
-
-# Token expiry
-TOKEN_EXPIRE_MINUTES = 3
-
 # Authentication
 AUTHENTICATION_BACKENDS = [
     'users.backends.phone_backend.PhoneNumberAuthBackend',
@@ -174,26 +175,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-SITE_ID = 1
 
-REST_USE_JWT = True
+AUTH_USER_MODEL = 'users.User'
 
-JWT_AUTH_COOKIE = 'phonenumber-auth'
-JWT_AUTH_REFRESH_COOKIE = 'phonenumber-refresh-token'
-
-# ACCOUNT_EMAIL_VERIFICATION SETTINGS
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
-# Phone number field
-PHONENUMBER_DEFAULT_REGION = 'PL'
-
-# Email
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = config('EMAIL_USER')
-# EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
