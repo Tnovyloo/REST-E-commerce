@@ -1,140 +1,49 @@
-import datetime
 from django.db import models
+from django.contrib.auth.models import (AbstractBaseUser,
+                                        BaseUserManager,
+                                        PermissionsMixin)
 from django.utils import timezone
-from django.utils.translation import gettext as _
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.utils.crypto import get_random_string
-from phonenumber_field.modelfields import PhoneNumberField
-from rest_framework.exceptions import NotAcceptable
-from twilio.rest import Client
-from twilio.base.exceptions import TwilioRestException
-from django_countries.fields import CountryField
-
-User = get_user_model()
-
-class PhoneNumber(models.Model):
-    user = models.OneToOneField(User,
-                                related_name='phone',
-                                on_delete=models.CASCADE)
-    phone_number = PhoneNumberField(unique=True)
-    security_code = models.CharField(max_length=120)
-    is_verified = models.BooleanField(default=False)
-    sent = models.DateTimeField(null=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-created_at', )
 
 
-    def __str__(self):
-        return self.phone_number.as_e164
-
-
-    def generate_security_code(self):
-        """
-        Returns a unique random `security_code` for given `TOKEN_LENGTH` in the settings.
-        Default token length = 6
-        """
-        token_length = getattr(settings, "TOKEN_LENGTH", 6)
-        return get_random_string(token_length, allowed_chars="0123456789")
-
-
-    def is_security_code_expired(self):
-        expiration_date = self.sent + datetime.timedelta(
-            minutes=settings.TOKEN_EXPIRE_MINUTES
+class UserManager(BaseUserManager):
+    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
+        if not email:
+            raise ValueError('Users must have an email address')
+        now = timezone.now()
+        email = self.normalize_email(email)
+        user = self.model(
+            email=email,
+            is_staff=is_staff,
+            is_active=True,
+            is_superuser=is_superuser,
+            last_login=now,
+            date_joined=now,
+            **extra_fields
         )
-        return expiration_date <= timezone.now()
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password, **extra_fields):
+        return self._create_user(email, password, False, False, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        user = self._create_user(email, password, True, True, **extra_fields)
+        user.save(using=self._db)
+        return user
 
 
-    def send_confirmation(self):
-        twilio_account_sid = settings.TWILIO_ACCOUNT_SID
-        twilio_auth_token = settings.TWILIO_AUTH_TOKEN
-        twilio_phone_number = settings.TWILIO_PHONE_NUMBER
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(max_length=254, unique=True)
+    name = models.CharField(max_length=254, null=True, blank=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
 
-        self.security_code = self.generate_security_code()
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
-        # print(
-        #     f'Sending security code {self.security_code} to phone {self.phone_number}')
-
-        if all(
-            [
-                twilio_account_sid,
-                twilio_auth_token,
-                twilio_phone_number
-            ]
-        ):
-            try:
-                twilio_client = Client(
-                    twilio_account_sid, twilio_auth_token
-                )
-                twilio_client.messages.create(
-                    body=f'Your activation code is {self.security_code}',
-                    to=str(self.phone_number),
-                    from_=twilio_phone_number,
-                )
-                self.sent = timezone.now()
-                self.save()
-                return True
-            except TwilioRestException as e:
-                print(e)
-        else:
-            print("Twilio credentials are not set")
-
-
-    def check_verification(self, security_code):
-        if (
-            not self.is_security_code_expired() and
-            security_code == self.security_code and
-            self.is_verified == False
-        ):
-            self.is_verified = True
-            self.save()
-        else:
-            raise NotAcceptable(
-                _("Your security code is wrong, expired or this phone is verified before."))
-
-        return self.is_verified
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(
-        User, related_name='profile', on_delete=models.CASCADE)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-created_at', )
-
-    def __str__(self):
-        return self.user.get_full_name()
-
-
-class Address(models.Model):
-    # Address options
-    BILLING = 'B'
-    SHIPPING = 'S'
-
-    ADDRESS_CHOICES = ((BILLING, _('billing')), (SHIPPING, _('shipping')))
-
-    user = models.ForeignKey(
-        User, related_name='addresses', on_delete=models.CASCADE)
-    address_type = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
-    default = models.BooleanField(default=False)
-    country = CountryField()
-    city = models.CharField(max_length=100)
-    street_address = models.CharField(max_length=100)
-    apartment_address = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-created_at', )
-
-    def __str__(self):
-        return self.user.get_full_name()
+    objects = UserManager()
