@@ -26,8 +26,8 @@ urlpatterns = [
     # path('api/user/', include('users.urls', namespace='users')),
     # path('api/user/', include('allauth.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+    # re_path(r'^rest-auth/', include('rest_auth.urls')),
+    # re_path(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
 ]
 
 

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
+    #TODO CREATE ALLAUTH REST API
+    # 'rest_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
