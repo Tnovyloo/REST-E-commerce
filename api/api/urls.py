@@ -23,11 +23,10 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/products', include('products.urls', namespace='products')),
-    # path('api/user/', include('users.urls', namespace='users')),
-    # path('api/user/', include('allauth.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # re_path(r'^rest-auth/', include('rest_auth.urls')),
-    # re_path(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('user/auth/', include('dj_rest_auth.urls')),
+    path('user/registration/', include('dj_rest_auth.registration.urls')),
+    path('user/', include('users.urls')),
 ]
 
 
