@@ -38,20 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # Third party apps
-    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    #TODO CREATE ALLAUTH REST API
     # 'rest_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.twitter',
     'dj_rest_auth.registration',
+    'dj_rest_auth',
     # 'phonenumber_field',
     # 'corsheaders',
     'drf_spectacular',
@@ -63,7 +62,7 @@ INSTALLED_APPS = [
     # 'payment',
 ]
 
-SITE_ID = 1
+
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -179,3 +178,4 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'users.User'
 
+SITE_ID = 1
