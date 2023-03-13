@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from os import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -181,3 +182,12 @@ SITE_ID = 1
 
 PHONENUMBER_DEFAULT_REGION = 'PL'
 
+
+# SMTP CONFIGURATION
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = environ.get('EMAIL')
+EMAIL_HOST_PASSWORD = environ.get('EMAIL_PASSWORD')
+EMAIL_USE_TLS = True
