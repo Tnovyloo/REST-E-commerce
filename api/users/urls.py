@@ -10,7 +10,7 @@ urlpatterns = [
     path('login/facebook/', FacebookLogin.as_view(), name='facebook_login'),
     path('login/google/', GoogleLogin.as_view(), name='google_login'),
 
-    path('/address/', include(router.urls)),
+    path('address/', include(router.urls)),
 
 ]
 
