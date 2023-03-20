@@ -20,4 +20,3 @@ class ProductViewSet(viewsets.GenericViewSet,
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-

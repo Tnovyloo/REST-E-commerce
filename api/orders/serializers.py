@@ -51,7 +51,8 @@ class OrderReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'shipping_address', 'billing_address', 'payment',
+        fields = ('id', 'shipping_address', 'billing_address',
+                  # 'payment',
                   'order_items', 'total_cost', 'status', 'created_at', 'updated_at')
 
     def get_total_cost(self, obj):
