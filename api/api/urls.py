@@ -25,8 +25,13 @@ urlpatterns = [
         'user/account-email-verification-sent/', TemplateView.as_view(),
         name='account_email_verification_sent',
     ),
+
+
     path('user/orders/',
          include('orders.urls', namespace='orders')),
+    path('api/user/payments/',
+         include('payment.urls', namespace='payment')),
+
 ]
 
 

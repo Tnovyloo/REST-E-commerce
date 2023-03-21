@@ -49,6 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    def get_full_name(self):
+        return str(self.name)
+
 
 class Address(models.Model):
     # Address options
