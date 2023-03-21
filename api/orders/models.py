@@ -32,7 +32,7 @@ class Order(models.Model):
         ordering = ('-created_at', )
 
     def __str__(self):
-        return self.buyer.get_full_name()
+        return self.buyer.get_full_name() + f" {self.id}"
 
     @cached_property
     def total_cost(self):
@@ -40,6 +40,7 @@ class Order(models.Model):
         Total cost of all the items in an order
         """
         return round(sum([order_item.cost for order_item in self.order_items.all()]), 2)
+
 
 
 class OrderItem(models.Model):

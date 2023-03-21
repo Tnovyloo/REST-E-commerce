@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'orders',
-    # 'payment',
+    'payment',
 ]
 
 
@@ -168,9 +168,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication
 AUTHENTICATION_BACKENDS = [
-    'users.backends.phone_backend.PhoneNumberAuthBackend',
+    # 'users.backends.phone_backend.PhoneNumberAuthBackend',
     'users.backends.email_backend.EmailAuthBackend',
+
+
+    # Needed to login by username in Django admin, regardless of allauth
+    'django.contrib.auth.backends.ModelBackend',
+
+    # allauth specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -183,6 +191,8 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'users.User'
 
 SITE_ID = 1
+REST_USE_JWT = True
+
 
 PHONENUMBER_DEFAULT_REGION = 'PL'
 
@@ -194,3 +204,15 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_USE_TLS = True
+
+# STRIPE CONFIGURATION
+
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+
+BACKEND_DOMAIN = os.getenv('BACKEND_DOMAIN')
+FRONTEND_DOMAIN = os.getenv('FRONTEND_DOMAIN')
+
+PAYMENT_SUCCESS_URL = os.getenv('PAYMENT_SUCCESS_URL')
+PAYMENT_CANCEL_URL = os.getenv('PAYMENT_CANCEL_URL')
