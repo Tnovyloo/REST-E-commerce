@@ -1,7 +1,13 @@
-from rest_framework import permissions, viewsets, mixins
+from rest_framework import permissions, viewsets, mixins, generics
 
-from products.models import Product, ProductCategory
-from products.serializers import ProductSerializer, ProductCategorySerializer
+from products.models import Product, ProductCategory, Tag
+from products.serializers import \
+(
+    ProductSerializer,
+    ProductCategorySerializer,
+    ProductTagSerializer,
+    TagsSerializer
+)
 
 
 class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -10,7 +16,21 @@ class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
-    permission_classes = (permissions.AllowAny, )
+    permission_classes = (permissions.AllowAny,)
+
+
+class TagsViewSet(generics.ListAPIView):
+    """
+    List and Retrieve product tags
+    """
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        # query_set = super().get_queryset()
+        # TODO create Tags better than before.
+        return self.queryset.filter(tags__name=self.kwargs['tag_name'])
 
 
 class ProductViewSet(viewsets.GenericViewSet,
@@ -21,6 +41,4 @@ class ProductViewSet(viewsets.GenericViewSet,
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = (permissions.AllowAny, )
-
-
+    permission_classes = (permissions.AllowAny,)

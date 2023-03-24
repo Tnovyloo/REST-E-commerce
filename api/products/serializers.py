@@ -12,7 +12,7 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         fields = ['name', 'icon']
 
 
-class TagSerializer(serializers.ModelSerializer):
+class ProductTagSerializer(serializers.ModelSerializer):
     """
     Serializer for Tags
     """
@@ -26,9 +26,20 @@ class ProductSerializer(serializers.ModelSerializer):
     Serializer class for products
     """
     category = serializers.CharField(source='category.name', read_only=True)
-    tags = TagSerializer(many=True, required=False)
+    tags = ProductTagSerializer(many=True, required=False)
 
     class Meta:
         model = Product
         fields = ['category', 'tags', 'name', 'desc', 'image', 'price']
+
+
+class TagsSerializer(serializers.ModelSerializer):
+    """
+    Serializes tags and all products from tag
+    """
+    products = ProductSerializer()
+
+    class Meta:
+        model = Tag
+        fields = ['name', 'products']
 

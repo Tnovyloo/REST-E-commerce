@@ -13,12 +13,9 @@ class TagInline(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
     """
-    On product admin site now is able to creating tags from one site
+    Product Admin View
     """
     list_display = ('category', 'name', 'price', 'quantity',)
-    inlines = [
-        TagInline
-    ]
 
 
 admin.site.register(Product, ProductAdmin)
