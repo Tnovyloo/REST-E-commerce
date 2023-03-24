@@ -55,3 +55,12 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
+class Tag(models.Model):
+    """Tag model for filtering objects"""
+    name = models.CharField(max_length=255)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.name
+

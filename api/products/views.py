@@ -14,9 +14,13 @@ class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ProductViewSet(viewsets.GenericViewSet,
-                     mixins.ListModelMixin):
+                     mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin):
     """
     List and Retrieve all products.
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = (permissions.AllowAny, )
+
+
