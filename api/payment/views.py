@@ -15,10 +15,11 @@ from payment.permissions import (
     IsPaymentPending
 )
 from payment.serializers import CheckoutSerializer, PaymentSerializer
-from orders.models import Order
+from products.models import Product
+from orders.models import Order, OrderItem
 from orders.permissions import IsOrderByBuyerOrAdmin
 from payment.tasks import send_payment_success_email_task
-
+from rest_framework import status
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -139,10 +140,13 @@ class StripeWebhookAPIView(APIView):
             order.save()
 
             # TODO - Decrease product quantity
+            order_items = OrderItem.objects.filter(order=order_id)
+            if order_items:
+                for order_item in order_items:
+                    order_item.product.quantity -= 1
 
             send_payment_success_email_task(customer_email)
 
-        # Can handle other events here.
 
         return Response(status=status.HTTP_200_OK)
 

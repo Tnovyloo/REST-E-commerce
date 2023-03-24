@@ -35,6 +35,14 @@ def get_default_product_category():
     return ProductCategory.objects.get_or_create(name="Others")[0]
 
 
+class Tag(models.Model):
+    """Tag model for filtering objects"""
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     """Product model"""
     category = models.ForeignKey(ProductCategory,
@@ -48,6 +56,8 @@ class Product(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    tags = models.ManyToManyField(Tag)
 
     class Meta:
         ordering = ('-created_at', )
