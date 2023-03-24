@@ -21,16 +21,16 @@ class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TagsViewSet(generics.ListAPIView):
     """
-    List and Retrieve product tags
+    Retrieve tag and send products.
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = (permissions.AllowAny,)
 
     def get_queryset(self):
-        # query_set = super().get_queryset()
+        query_set = super().get_queryset()
         # TODO create Tags better than before.
-        return self.queryset.filter(tags__name=self.kwargs['tag_name'])
+        return query_set.filter(tags__name=self.kwargs['tag_name'])
 
 
 class ProductViewSet(viewsets.GenericViewSet,
